@@ -31,6 +31,9 @@ if sys.argv[0].split(os.sep)[-1] in ("fab",             # POSIX
         exit()
 
 env.db_pass = conf.get("DB_PASS", None)
+env.db_name = conf.get("DB_NAME", None)
+env.db_user = conf.get("DB_USER", None)
+env.db_host = conf.get("DB_HOST", None)
 env.admin_pass = conf.get("ADMIN_PASS", None)
 env.user = conf.get("SSH_USER", getuser())
 env.password = conf.get("SSH_PASS", None)
@@ -264,39 +267,40 @@ def pip(packages):
         return sudo("pip install %s" % packages)
 
 
-def postgres(command):
-    """
-    Runs the given command as the postgres user.
-    """
-    show = not command.startswith("psql")
-    return run("sudo -u root sudo -u postgres %s" % command, show=show)
+# DZ: disabled, as postgres user is not needed w/RDS
+# def postgres(command):
+#     """
+#     Runs the given command as the postgres user.
+#     """
+#     show = not command.startswith("psql")
+#     return run("sudo -u root sudo -u postgres %s" % command, show=show)
 
 
-@task
-def psql(sql, show=True):
-    """
-    Runs SQL against the project's database.
-    """
-    out = postgres('psql -c "%s"' % sql)
-    if show:
-        print_command(sql)
-    return out
+# @task
+# def psql(sql, show=True):
+#     """
+#     Runs SQL against the project's database.
+#     """
+#     out = postgres('psql -c "%s"' % sql)
+#     if show:
+#         print_command(sql)
+#     return out
 
 
-@task
-def backup(filename):
-    """
-    Backs up the database.
-    """
-    return postgres("pg_dump -Fc %s > %s" % (env.proj_name, filename))
+# @task
+# def backup(filename):
+#     """
+#     Backs up the database.
+#     """
+#     return postgres("pg_dump -Fc %s > %s" % (env.proj_name, filename))
 
 
-@task
-def restore(filename):
-    """
-    Restores the database.
-    """
-    return postgres("pg_restore -c -d %s %s" % (env.proj_name, filename))
+# @task
+# def restore(filename):
+#     """
+#     Restores the database.
+#     """
+#     return postgres("pg_restore -c -d %s %s" % (env.proj_name, filename))
 
 
 @task
@@ -346,9 +350,9 @@ def install():
             run("exit")
     sudo("apt-get update -y -q")
     apt("nginx libjpeg-dev python-dev python-setuptools git-core "
-        "postgresql libpq-dev memcached supervisor")
+        "memcached supervisor")
     sudo("easy_install pip")
-    sudo("pip install virtualenv mercurial")
+    sudo("pip install virtualenv")
 
 
 @task
@@ -374,16 +378,17 @@ def create():
         vcs = "git" if env.git else "hg"
         run("%s clone %s %s" % (vcs, env.repo_url, env.proj_path))
 
-    # Create DB and DB user.
-    pw = db_pass()
-    user_sql_args = (env.proj_name, pw.replace("'", "\'"))
-    user_sql = "CREATE USER %s WITH ENCRYPTED PASSWORD '%s';" % user_sql_args
-    psql(user_sql, show=False)
-    shadowed = "*" * len(pw)
-    print_command(user_sql.replace("'%s'" % pw, "'%s'" % shadowed))
-    psql("CREATE DATABASE %s WITH OWNER %s ENCODING = 'UTF8' "
-         "LC_CTYPE = '%s' LC_COLLATE = '%s' TEMPLATE template0;" %
-         (env.proj_name, env.proj_name, env.locale, env.locale))
+    # DZ: disabled because this is performed by Amazon RDS
+    # # Create DB and DB user.
+    # pw = db_pass()
+    # user_sql_args = (env.proj_name, pw.replace("'", "\'"))
+    # user_sql = "CREATE USER %s WITH ENCRYPTED PASSWORD '%s';" % user_sql_args
+    # psql(user_sql, show=False)
+    # shadowed = "*" * len(pw)
+    # print_command(user_sql.replace("'%s'" % pw, "'%s'" % shadowed))
+    # psql("CREATE DATABASE %s WITH OWNER %s ENCODING = 'UTF8' "
+    #      "LC_CTYPE = '%s' LC_COLLATE = '%s' TEMPLATE template0;" %
+    #      (env.proj_name, env.proj_name, env.locale, env.locale))
 
     # Set up SSL certificate.
     conf_path = "/etc/nginx/conf"
@@ -444,8 +449,8 @@ def remove():
         remote_path = template["remote_path"]
         if exists(remote_path):
             sudo("rm %s" % remote_path)
-    psql("DROP DATABASE %s;" % env.proj_name)
-    psql("DROP USER %s;" % env.proj_name)
+    # psql("DROP DATABASE %s;" % env.proj_name)
+    # psql("DROP USER %s;" % env.proj_name)
 
 
 ##############
@@ -486,7 +491,7 @@ def deploy():
     for name in get_templates():
         upload_template_and_reload(name)
     with project():
-        backup("last.db")
+        #backup("last.db")
         static_dir = static()
         if exists(static_dir):
             run("tar -cf last.tar %s" % static_dir)
@@ -518,7 +523,7 @@ def rollback():
             run("%s `cat last.commit`" % update)
         with cd(join(static(), "..")):
             run("tar -xf %s" % join(env.proj_path, "last.tar"))
-        restore("last.db")
+        #restore("last.db")
     restart()
 
 

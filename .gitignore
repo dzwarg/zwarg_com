@@ -38,3 +38,5 @@ nosetests.xml
 .DS_Store
 local_settings.py
 /static
+
+env
