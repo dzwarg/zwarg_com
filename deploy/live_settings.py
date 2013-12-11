@@ -20,7 +20,7 @@ DATABASES = {
 }
 
 ALLOWED_HOSTS = [
-    "ec2-54-221-63-75.compute-1.amazonaws.com"
+    "%(live_host)s"
 ]
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTOCOL", "https")

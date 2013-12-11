@@ -334,7 +334,9 @@ DEBUG_TOOLBAR_CONFIG = {"INTERCEPT_REDIRECTS": False}
 try:
     from local_settings import *
 except ImportError:
-    pass
+    import random, string
+    SECRET_KEY = ''.join(random.choice(string.ascii_lowercase + string.digits) for x in range(108))
+    ALLOWED_HOSTS = ['127.0.0.1']
 
 
 ####################
