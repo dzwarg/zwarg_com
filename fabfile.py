@@ -49,7 +49,6 @@ env.manage = "%s/bin/python %s/project/manage.py" % (env.venv_path,
                                                      env.venv_path)
 env.live_host = conf.get("LIVE_HOSTNAME", env.hosts[0] if env.hosts else None)
 env.repo_url = conf.get("REPO_URL", "")
-env.git = env.repo_url.startswith("git") or env.repo_url.endswith(".git")
 env.reqs_path = conf.get("REQUIREMENTS_PATH", None)
 env.gunicorn_port = conf.get("GUNICORN_PORT", 8000)
 env.locale = conf.get("LOCALE", "en_US.UTF-8")
@@ -164,14 +163,14 @@ def print_command(command):
 
 
 @task
-def run(command, show=True):
+def run(command, show=True, quiet=False):
     """
     Runs a shell comand on the remote server.
     """
     if show:
         print_command(command)
     with hide("running"):
-        return _run(command)
+        return _run(command, quiet=quiet)
 
 
 @task
@@ -302,6 +301,14 @@ def pip(packages):
 #     """
 #     return postgres("pg_restore -c -d %s %s" % (env.proj_name, filename))
 
+def copy_key(filename):
+    """
+    Copy an SSH key onto the remote system.
+    """
+    key = open(filename, 'r')
+    content = ''.join(key.readlines())
+    run('echo "%s" > ~/.ssh/id_rsa' % content, quiet=True)
+    run('chmod go-rwx ~/.ssh/id_rsa')
 
 @task
 def python(code, show=True):
@@ -350,7 +357,7 @@ def install():
             run("exit")
     sudo("apt-get update -y -q")
     apt("nginx libjpeg-dev python-dev python-setuptools git-core "
-        "memcached supervisor")
+        "memcached supervisor libpq-dev")
     sudo("easy_install pip")
     sudo("pip install virtualenv")
 
@@ -375,8 +382,8 @@ def create():
                 return False
             remove()
         run("virtualenv %s --distribute" % env.proj_name)
-        vcs = "git" if env.git else "hg"
-        run("%s clone %s %s" % (vcs, env.repo_url, env.proj_path))
+        copy_key(env.key_filename)
+        run("git clone %s %s" % (env.repo_url, env.proj_path,))
 
     # DZ: disabled because this is performed by Amazon RDS
     # # Create DB and DB user.
@@ -495,11 +502,10 @@ def deploy():
         static_dir = static()
         if exists(static_dir):
             run("tar -cf last.tar %s" % static_dir)
-        git = env.git
-        last_commit = "git rev-parse HEAD" if git else "hg id -i"
+        last_commit = "git rev-parse HEAD"
         run("%s > last.commit" % last_commit)
         with update_changed_requirements():
-            run("git pull origin master -f" if git else "hg pull && hg up -C")
+            run("git pull origin master -f")
         manage("collectstatic -v 0 --noinput")
         manage("syncdb --noinput")
         manage("migrate --noinput")
@@ -519,7 +525,7 @@ def rollback():
     """
     with project():
         with update_changed_requirements():
-            update = "git checkout" if env.git else "hg up -C"
+            update = "git checkout"
             run("%s `cat last.commit`" % update)
         with cd(join(static(), "..")):
             run("tar -xf %s" % join(env.proj_path, "last.tar"))

@@ -4,7 +4,6 @@ Pillow==2.2.1
 South==0.8.4
 argparse==1.2.1
 bleach==1.2.2
-distribute==0.6.24
 filebrowser-safe==0.2.31
 grappelli-safe==0.2.23
 html5lib==0.95
