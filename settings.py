@@ -306,7 +306,7 @@ DEBUG_TOOLBAR_CONFIG = {"INTERCEPT_REDIRECTS": False}
 # These settings are used by the default fabfile.py provided.
 # Check fabfile.py for defaults.
 
-# FABRIC = {
+FABRIC = {
 #     "SSH_USER": "", # SSH username
 #     "SSH_PASS":  "", # SSH password (consider key-based authentication)
 #     "SSH_KEY_PATH":  "", # Local path to SSH key file, for key-based auth
@@ -322,7 +322,7 @@ DEBUG_TOOLBAR_CONFIG = {"INTERCEPT_REDIRECTS": False}
 #     "ADMIN_PASS": "", # Live admin user password
 #     "SECRET_KEY": SECRET_KEY,
 #     "NEVERCACHE_KEY": NEVERCACHE_KEY,
-# }
+}
 
 
 ##################
