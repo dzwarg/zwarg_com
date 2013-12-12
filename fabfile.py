@@ -44,8 +44,8 @@ env.reqs_path = conf.get("REQUIREMENTS_PATH", os.environ.get("REQUIREMENTS_PATH"
 env.gunicorn_port = conf.get("GUNICORN_PORT", 8000)
 env.locale = conf.get("LOCALE", "en_US.UTF-8")
 
-env.secret_key = conf.get("SECRET_KEY", "")
-env.nevercache_key = conf.get("NEVERCACHE_KEY", "")
+env.secret_key = conf.get("SECRET_KEY", os.environ.get("SECRET_KEY",""))
+env.nevercache_key = conf.get("NEVERCACHE_KEY", os.environ.get("NEVERCACHE_KEY", ""))
 
 
 ##################
