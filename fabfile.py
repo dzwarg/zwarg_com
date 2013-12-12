@@ -1,6 +1,7 @@
 import os
 import re
 import sys
+import boto
 from functools import wraps
 from getpass import getpass, getuser
 from glob import glob
@@ -11,29 +12,20 @@ from fabric.api import env, cd, prefix, sudo as _sudo, run as _run, hide, task
 from fabric.contrib.files import exists, upload_template
 from fabric.colors import yellow, green, blue, red
 
+import utils
 
 ################
 # Config setup #
 ################
 
-conf = {}
-if sys.argv[0].split(os.sep)[-1] in ("fab",             # POSIX
-                                     "fab-script.py"):  # Windows
-    # Ensure we import settings from the current dir
-    try:
-        conf = __import__("settings", globals(), locals(), [], 0).FABRIC
-        try:
-            conf["HOSTS"][0]
-        except (KeyError, ValueError):
-            raise ImportError
-    except (ImportError, AttributeError):
-        print "Aborting, no hosts defined."
-        exit()
+from settings import FABRIC as conf
+conf.update({"HOSTS":utils.get_ec2_hosts()})
 
 env.db_pass = conf.get("DB_PASS", None)
 env.db_name = conf.get("DB_NAME", None)
 env.db_user = conf.get("DB_USER", None)
-env.db_host = conf.get("DB_HOST", None)
+env.db_host = conf.get("DB_HOST", utils.get_rds_host()[0])
+env.db_port = conf.get("DB_PORT", utils.get_rds_host()[1])
 env.admin_pass = conf.get("ADMIN_PASS", None)
 env.user = conf.get("SSH_USER", getuser())
 env.password = conf.get("SSH_PASS", None)
