@@ -1,7 +1,6 @@
 import os
 import re
 import sys
-import boto
 from functools import wraps
 from getpass import getpass, getuser
 from glob import glob
@@ -12,20 +11,21 @@ from fabric.api import env, cd, prefix, sudo as _sudo, run as _run, hide, task
 from fabric.contrib.files import exists, upload_template
 from fabric.colors import yellow, green, blue, red
 
-import utils
+from utils import BotoConnection
+boto = BotoConnection(region='us-east-1')
 
 ################
 # Config setup #
 ################
 
 from settings import FABRIC as conf
-conf.update({"HOSTS":utils.get_ec2_hosts()})
+conf.update({"HOSTS":boto.get_ec2_hosts()})
 
 env.db_pass = conf.get("DB_PASS", None)
-env.db_name = conf.get("DB_NAME", None)
-env.db_user = conf.get("DB_USER", None)
-env.db_host = conf.get("DB_HOST", utils.get_rds_host()[0])
-env.db_port = conf.get("DB_PORT", utils.get_rds_host()[1])
+env.db_name = conf.get("DB_NAME", boto.get_rds_dbname())
+env.db_user = conf.get("DB_USER", boto.get_rds_username())
+env.db_host = conf.get("DB_HOST", boto.get_rds_host())
+env.db_port = conf.get("DB_PORT", boto.get_rds_port())
 env.admin_pass = conf.get("ADMIN_PASS", None)
 env.user = conf.get("SSH_USER", getuser())
 env.password = conf.get("SSH_PASS", None)
@@ -139,7 +139,7 @@ def update_changed_requirements():
 
 
 ###########################################
-# Utils and wrappers for various commands #
+# boto and wrappers for various commands #
 ###########################################
 
 def _print(output):
@@ -423,7 +423,7 @@ def create():
                "site.save();")
         if env.admin_pass:
             pw = env.admin_pass
-            user_py = ("from mezzanine.utils.models import get_user_model;"
+            user_py = ("from mezzanine.boto.models import get_user_model;"
                        "User = get_user_model();"
                        "u, _ = User.objects.get_or_create(username='admin');"
                        "u.is_staff = u.is_superuser = True;"
