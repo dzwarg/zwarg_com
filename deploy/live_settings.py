@@ -41,4 +41,5 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 AWS_ACCESS_KEY_ID = "%(aws_id)s"
 AWS_SECRET_ACCESS_KEY = "%(aws_key)s"
 AWS_STORAGE_BUCKET_NAME = "%(aws_bucket)s"
-STATIC_URL = 'http://%s.s3.amazonaws.com/' % AWS_STORAGE_BUCKET_NAME
+STATIC_URL = 'http://{0}.s3.amazonaws.com/{1}/'.format(AWS_STORAGE_BUCKET_NAME, 'static')
+MEDIA_URL = 'http://{0}.s3.amazonaws.com/{1}/'.format(AWS_STORAGE_BUCKET_NAME, 'media')

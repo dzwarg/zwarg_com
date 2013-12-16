@@ -171,11 +171,11 @@ DATABASES = {
 ##################
 # Django-storages
 ##################
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+DEFAULT_FILE_STORAGE = 'zwarg_com.utils.MediaS3BotoStorage'
 AWS_ACCESS_KEY_ID = ''
 AWS_SECRET_ACCESS_KEY = ''
 AWS_STORAGE_BUCKET_NAME = ''
-STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+STATICFILES_STORAGE = 'zwarg_com.utils.StaticS3BotoStorage'
 AWS_S3_SECURE_URLS = False
 AWS_QUERYSTRING_AUTH = False
 
