@@ -46,7 +46,9 @@ env.locale = conf.get("LOCALE", "en_US.UTF-8")
 
 env.secret_key = conf.get("SECRET_KEY", os.environ.get("SECRET_KEY",""))
 env.nevercache_key = conf.get("NEVERCACHE_KEY", os.environ.get("NEVERCACHE_KEY", ""))
-
+env.aws_id = conf.get("AWS_ACCESS_KEY_ID", os.environ.get("AWS_ACCESS_KEY_ID", ""))
+env.aws_key = conf.get("AWS_SECRET_ACCESS_KEY", os.environ.get("AWS_SECRET_ACCESS_KEY", ""))
+env.aws_bucket = conf.get("AWS_STORAGE_BUCKET_NAME", os.environ.get("AWS_STORAGE_BUCKET_NAME", ""))
 
 ##################
 # Template setup #

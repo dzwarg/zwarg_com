@@ -98,7 +98,7 @@ MANAGERS = ADMINS
 # timezone as the operating system.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = None
+TIME_ZONE = 'America/New_York'
 
 # If you set this to True, Django will use timezone-aware datetimes.
 USE_TZ = True
@@ -168,6 +168,14 @@ DATABASES = {
     }
 }
 
+##################
+# Django-storages
+##################
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+AWS_ACCESS_KEY_ID = ''
+AWS_SECRET_ACCESS_KEY = ''
+AWS_STORAGE_BUCKET_NAME = ''
+STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
 #########
 # PATHS #
@@ -239,6 +247,7 @@ INSTALLED_APPS = (
     "mezzanine.twitter",
     "geo",
     "migrate",
+    "storages",
     #"mezzanine.accounts",
     #"mezzanine.mobile",
 )
