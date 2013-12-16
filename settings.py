@@ -176,6 +176,8 @@ AWS_ACCESS_KEY_ID = ''
 AWS_SECRET_ACCESS_KEY = ''
 AWS_STORAGE_BUCKET_NAME = ''
 STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+AWS_S3_SECURE_URLS = False
+AWS_QUERYSTRING_AUTH = False
 
 #########
 # PATHS #
