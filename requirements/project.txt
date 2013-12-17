@@ -14,3 +14,4 @@ requests==1.2.3
 requests-oauthlib==0.3.3
 wsgiref==0.1.2
 django-storages==1.1.8
+boto==2.19.0
