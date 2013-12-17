@@ -499,7 +499,7 @@ def deploy():
         run("%s > last.commit" % last_commit)
         with update_changed_requirements():
             run("git pull origin master -f")
-        with shell_env(AWS_ACCESS_KEY_ID=env.aws_id, AWS_SECRET_ACCESS_KEY=env.aws_key)
+        with shell_env(AWS_ACCESS_KEY_ID=env.aws_id, AWS_SECRET_ACCESS_KEY=env.aws_key):
             manage("collectstatic -v 0 --noinput")
         manage("syncdb --noinput")
         manage("migrate --noinput")
