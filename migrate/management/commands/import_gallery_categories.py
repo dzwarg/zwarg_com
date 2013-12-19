@@ -39,7 +39,6 @@ class Command(BaseCommand):
                 options = {
                     'site_id':site_id,
                     'title':row['name'],
-                    'slug':slugify(unicode(row['name'])),
                     'content':row['description'],
                     'in_sitemap':True,
                     'in_menus': '',
