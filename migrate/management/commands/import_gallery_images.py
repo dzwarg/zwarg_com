@@ -50,9 +50,13 @@ class Command(BaseCommand):
                 )
                 gallery = gallery_lookup[row['category_id']]
 
-                webio = urlopen(url)
-                data = webio.read()
-                webio.close()
+                try:
+                    webio = urlopen(url)
+                    data = webio.read()
+                    webio.close()
+                except:
+                    print '\nImage "{}" could not be read, skipping.\n'.format(url)
+                    continue
 
                 try:
                     image = Image.open(StringIO(data))
@@ -77,3 +81,5 @@ class Command(BaseCommand):
                 if count > 0 and count % progress == 0:
                     sys.stdout.write(' | {}\n'.format(count))
                     sys.stdout.flush()
+
+                count += 1

@@ -1,0 +1,23 @@
+{% load i18n gallery_tags %}
+
+{% gallery_recent_galleries 5 as recent_galleries %}
+{% if recent_galleries %}
+<h3>{% trans "Recent Galleries" %}</h3>
+<ul class="unstyled recent-galleries">
+{% for recent_gallery in recent_galleries %}
+<li><a href="{{ recent_gallery.get_absolute_url }}"
+    >{{ recent_gallery.title }}</a></li>
+{% endfor %}
+</ul>
+{% endif %}
+
+{% gallery_recent_images 5 as recent_images %}
+{% if recent_images %}
+<h3>{% trans "Recent Images" %}</h3>
+<ul class="unstyled recent-images">
+{% for recent_image in recent_images %}
+<li><a href="{{ recent_image.gallery.get_absolute_url }}"
+    >{{ recent_image.description }}</a></li>
+{% endfor %}
+</ul>
+{% endif %}

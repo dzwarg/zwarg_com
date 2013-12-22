@@ -1,0 +1,44 @@
+{% overextends "pages/gallery.html" %}
+
+{% block extra_css %}
+{{ block.super }}
+<style type="text/css">
+    ul.gallery-list {
+        list-style: none;
+        position: relative;
+    }
+
+    ul.gallery-list li {
+        float: left;
+    }
+
+    ul.gallery-list li a {
+        margin: 2px;
+        border: solid 1px #cecece;
+        padding: 5px;
+        border-radius: 5px;
+        display: block;
+    }
+</style>
+{% endblock %}
+
+{% block main %}
+{% if page.gallery.children.all.count %}
+<h3>Galleries</h3>
+<ul class="gallery-list clearfix">
+{% with page.gallery.children.all as galleries %}
+{% for gallery in galleries %}
+<li>
+    <a href="{{ gallery.get_absolute_url }}">{{ gallery.title }}</a>
+</li>
+{% endfor %}
+{% endwith %}
+</ul>
+{% endif %}
+
+{{ block.super }}
+{% endblock %}
+
+{% block right_panel %}
+{% include "gallery/includes/recent_panel.html" %}
+{% endblock %}
