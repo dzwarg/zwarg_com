@@ -5,7 +5,7 @@ NEVERCACHE_KEY = "%(nevercache_key)s"
 DATABASES = {
     "default": {
         # Ends with "postgresql_psycopg2", "mysql", "sqlite3" or "oracle".
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "ENGINE": "django.contrib.gis.db.backends.postgis",
         # DB name or path to database file if using sqlite3.
         "NAME": "%(db_name)s",
         # Not used with sqlite3.

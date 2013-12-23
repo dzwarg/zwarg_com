@@ -248,8 +248,10 @@ INSTALLED_APPS = (
     "mezzanine.galleries",
     "mezzanine.twitter",
     "zwarg_com.gallery",
+    "zwarg_com.geo",
     "migrate",
     "storages",
+    "django.contrib.gis",
     #"mezzanine.accounts",
     #"mezzanine.mobile",
 )
