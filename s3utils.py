@@ -51,5 +51,12 @@ class S3BotoStorageSafe(S3BotoStorage):
         #key.copy(key.bucket, key.name, preserve_acl=True, metadata={'Content-Type': 'text/plain'})
         return re
 
-StaticS3BotoStorage = lambda: S3BotoStorageSafe(location='static')
-MediaS3BotoStorage = lambda: S3BotoStorageSafe(location='media') 
+class StaticS3BotoStorage(S3BotoStorageSafe):
+    def __init__(self, *args, **kwargs):
+        kwargs.update(location='static')
+        return super(S3BotoStorageSafe, self).__init__(*args, **kwargs)
+
+class MediaS3BotoStorage(S3BotoStorageSafe):
+    def __init__(self, *args, **kwargs):
+        kwargs.update(location='media')
+        return super(S3BotoStorageSafe, self).__init__(*args, **kwargs)
