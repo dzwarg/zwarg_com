@@ -50,7 +50,7 @@
 # field instance. When specifying the field class, the path
 # ``django.models.db.`` can be omitted for regular Django model fields.
 #
-# EXTRA_MODEL_FIELDS = (
+EXTRA_MODEL_FIELDS = (
 #     (
 #         # Dotted path to field.
 #         "mezzanine.blog.models.BlogPost.image",
@@ -62,13 +62,13 @@
 #         {"blank": True, "upload_to": "blog"},
 #     ),
 #     # Example of adding a field to *all* of Mezzanine's content types:
-#     (
-#         "mezzanine.pages.models.Page.another_field",
-#         "IntegerField", # 'django.db.models.' is implied if path is omitted.
-#         ("Another name",),
-#         {"blank": True, "default": 1},
-#     ),
-# )
+    # (
+    #     "mezzanine.pages.models.Page.geom",
+    #     "django.contrib.gis.db.models.fields.MultiLineStringField", # 'django.db.models.' is implied if path is omitted.
+    #     (),
+    #     {'null':True, 'blank':True, 'default':None},
+    # ),
+)
 
 # Setting to turn on featured images for blog posts. Defaults to False.
 #
