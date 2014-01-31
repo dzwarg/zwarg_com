@@ -33,11 +33,12 @@ env.hosts = conf.get("HOSTS", [])
 
 env.proj_name = conf.get("PROJECT_NAME", os.getcwd().split(os.sep)[-1])
 env.venv_home = conf.get("VIRTUALENV_HOME", "/home/%s" % env.user)
-env.venv_path = "%s/%s" % (env.venv_home, env.proj_name)
-env.proj_dirname = "project"
+env.venv_path = "%s/env" % (env.venv_home)
+env.proj_dirname = "zwarg_com"
 env.proj_path = "%s/%s" % (env.venv_path, env.proj_dirname)
-env.manage = "%s/bin/python %s/project/manage.py" % (env.venv_path,
-                                                     env.venv_path)
+env.manage = "%s/bin/python %s/%s/manage.py" % (env.venv_path,
+                                                env.venv_path,
+                                                env.proj_dirname)
 env.live_host = conf.get("LIVE_HOSTNAME", env.hosts[0] if env.hosts else None)
 env.repo_url = conf.get("REPO_URL", os.environ.get("REPO_URL", ""))
 env.reqs_path = conf.get("REQUIREMENTS_PATH", os.environ.get("REQUIREMENTS_PATH", None))
@@ -350,7 +351,7 @@ def install():
             run("exit")
     sudo("apt-get update -y -q")
     apt("nginx libjpeg-dev python-dev python-setuptools git-core "
-        "memcached supervisor libpq-dev")
+        "memcached supervisor libpq-dev python-gdal")
     sudo("easy_install pip")
     sudo("pip install virtualenv")
 
