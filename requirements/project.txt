@@ -5,7 +5,6 @@ South==0.8.4
 argparse==1.2.1
 bleach==1.4
 boto==2.21.0
-distribute==0.6.24
 django-debug-toolbar==1.0
 django-extensions==1.2.5
 django-storages==1.1.8
