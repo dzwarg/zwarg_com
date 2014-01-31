@@ -11,7 +11,7 @@ class BotoConnection(object):
         self.rds_conn = rds.connect_to_region(self.region)
 
     def get_ec2_hosts(self):
-        return map(lambda x: x.public_dns_name, self.ec2_conn.get_only_instances())
+        return map(lambda x: x.public_dns_name, self.ec2_conn.get_only_instances(filters={'tag:Name':'Web Server'}))
 
     def get_rds_host(self):
         return map(lambda x: x.endpoint, self.rds_conn.get_all_dbinstances())[0][0]
