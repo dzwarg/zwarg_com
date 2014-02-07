@@ -32,13 +32,10 @@ env.key_filename = conf.get("SSH_KEY_PATH", os.environ.get("SSH_KEY_PATH", None)
 env.hosts = conf.get("HOSTS", [])
 
 env.proj_name = conf.get("PROJECT_NAME", os.getcwd().split(os.sep)[-1])
-env.venv_home = conf.get("VIRTUALENV_HOME", "/home/%s" % env.user)
+env.venv_home = "/home/%s" % (env.user)
 env.venv_path = "%s/env" % (env.venv_home)
-env.proj_dirname = "zwarg_com"
-env.proj_path = "%s/%s" % (env.venv_path, env.proj_dirname)
-env.manage = "%s/bin/python %s/%s/manage.py" % (env.venv_path,
-                                                env.venv_path,
-                                                env.proj_dirname)
+env.proj_path = "%s/%s" % (env.venv_home, env.proj_name)
+env.manage = "%s/bin/python %s/manage.py" % (env.venv_path, env.proj_path)
 env.live_host = conf.get("LIVE_HOSTNAME", env.hosts[0] if env.hosts else None)
 env.repo_url = conf.get("REPO_URL", os.environ.get("REPO_URL", ""))
 env.reqs_path = conf.get("REQUIREMENTS_PATH", os.environ.get("REQUIREMENTS_PATH", None))
@@ -107,9 +104,8 @@ def project():
     Runs commands within the project's directory.
     """
     with virtualenv():
-        with cd(env.proj_dirname):
+        with cd(env.proj_path):
             yield
-
 
 @contextmanager
 def update_changed_requirements():
@@ -349,12 +345,15 @@ def install():
         if locale not in sudo("cat /etc/default/locale"):
             sudo("update-locale %s" % locale)
             run("exit")
+
+    # Allow this EC2 instance to connect to the RDS instance
+    boto.tunnel_ec2_to_rds()
+
     sudo("apt-get update -y -q")
     apt("nginx libjpeg-dev python-dev python-setuptools git-core "
         "memcached supervisor libpq-dev python-gdal")
     sudo("easy_install pip")
     sudo("pip install virtualenv")
-
 
 @task
 @log_call
@@ -375,7 +374,7 @@ def create():
                 print "\nAborting!"
                 return False
             remove()
-        run("virtualenv %s --distribute" % env.proj_name)
+        run("virtualenv %s --distribute" % (env.venv_path))
         copy_key(env.key_filename)
         run("git clone %s %s" % (env.repo_url, env.proj_path,))
 
@@ -501,6 +500,7 @@ def deploy():
         with update_changed_requirements():
             run("git pull origin master -f")
         manage("collectstatic -v 0 --noinput")
+        manage("compress --force")
         manage("syncdb --noinput")
         manage("migrate --noinput")
     restart()

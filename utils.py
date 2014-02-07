@@ -24,3 +24,15 @@ class BotoConnection(object):
 
     def get_rds_dbname(self):
         return map(lambda x: x.DBName, self.rds_conn.get_all_dbinstances())[0]
+
+    def tunnel_ec2_to_rds(self):
+        # only get one host
+        ec2host = self.ec2_conn.get_only_instances(filters={'tag:Name':'Web Server'})[0]
+
+        # only get one DB
+        rdshost = self.rds_conn.get_all_dbinstances()[0]
+
+        try:
+            rdshost.security_group.authorize(cidr_ip='%s/32' % ec2host.private_ip_address)
+        except Exception, ex:
+            print 'Exception while authorizing, probably already authorized.'
