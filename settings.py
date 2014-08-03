@@ -62,12 +62,12 @@ EXTRA_MODEL_FIELDS = (
 #         {"blank": True, "upload_to": "blog"},
 #     ),
 #     # Example of adding a field to *all* of Mezzanine's content types:
-    # (
-    #     "mezzanine.pages.models.Page.geom",
-    #     "django.contrib.gis.db.models.fields.MultiLineStringField", # 'django.db.models.' is implied if path is omitted.
-    #     (),
-    #     {'null':True, 'blank':True, 'default':None},
-    # ),
+    (
+        "mezzanine.pages.models.Page.geom",
+        "django.contrib.gis.db.models.fields.LineStringField", # 'django.db.models.' is implied if path is omitted.
+        (),
+        {'null':True, 'blank':True, 'default':None},
+    ),
 )
 
 # Setting to turn on featured images for blog posts. Defaults to False.
@@ -269,6 +269,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.request",
     "django.core.context_processors.tz",
     "mezzanine.conf.context_processors.settings",
+    "mezzanine.pages.context_processors.page",
 )
 
 # List of middleware classes to use. Order is important; in the request phase,

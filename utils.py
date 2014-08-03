@@ -11,7 +11,7 @@ class BotoConnection(object):
         self.rds_conn = rds.connect_to_region(self.region)
 
     def get_ec2_hosts(self):
-        return map(lambda x: x.public_dns_name, self.ec2_conn.get_only_instances(filters={'tag:Name':'Web Server'}))
+        return map(lambda x: x.public_dns_name, self.ec2_conn.get_only_instances(filters={'tag:Name':'zwarg.com Web Server', 'instance-state-name':'running'}))
 
     def get_rds_host(self):
         return map(lambda x: x.endpoint, self.rds_conn.get_all_dbinstances())[0][0]
@@ -27,7 +27,7 @@ class BotoConnection(object):
 
     def tunnel_ec2_to_rds(self):
         # only get one host
-        ec2host = self.ec2_conn.get_only_instances(filters={'tag:Name':'Web Server'})[0]
+        ec2host = self.ec2_conn.get_only_instances(filters={'tag:Name':'zwarg.com Web Server', 'instance-state-name':'running'})[0]
 
         # only get one DB
         rdshost = self.rds_conn.get_all_dbinstances()[0]

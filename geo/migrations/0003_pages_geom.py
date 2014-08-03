@@ -10,7 +10,7 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         # Adding field 'Page.geom'
         db.add_column(u'pages_page', u'geom',
-                      self.gf('django.contrib.gis.db.models.fields.MultiLineStringField')(default=None, null=True, blank=True),
+                      self.gf('django.contrib.gis.db.models.fields.LineStringField')(default=None, null=True, blank=True),
                       keep_default=False)
 
 
@@ -33,7 +33,7 @@ class Migration(SchemaMigration):
             'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'expiry_date': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'gen_description': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            u'geom': ('django.contrib.gis.db.models.fields.MultiLineStringField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
+            u'geom': ('django.contrib.gis.db.models.fields.LineStringField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'in_menus': ('mezzanine.pages.fields.MenusField', [], {'default': '(1, 2, 3)', 'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'in_sitemap': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
