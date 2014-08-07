@@ -10,9 +10,12 @@ var geom = '{{page.geom}}',
     wkt = new OpenLayers.Format.WKT();
 </script>
 <style type="text/css">
+#post-body-map-container {
+    width: 100%;
+}
 #map {
-    height: 400px;
-    width: 600px; 
+    height: 500px;
+    width: 100%; 
 }
 </style>
 {% endif %}
@@ -21,28 +24,34 @@ var geom = '{{page.geom}}',
 {% block main %}{{ block.super }}
 
 {% if page.geom %}
-<div id="map"></div>
+<div id="post-body-map-container"></div>
 <script type="text/javascript">
 $(function () {
-    var map = new OpenLayers.Map('map'),
-        wms = new OpenLayers.Layer.WMS( "OpenLayers WMS",
-            "http://vmap0.tiles.osgeo.org/wms/vmap0?", {layers: 'basic'}),
-        vectors = new OpenLayers.Layer.Vector("Vector Layer"),
-        features = wkt.read(geom),
+    var elem = document.getElementById('map'),
+        options = {projection: new OpenLayers.Projection("EPSG:900913")},
+        map,
+        tiles,
+        vectors,
+        feature,
         bounds;
 
-    map.addLayers([wms, vectors]);
-    map.setCenter(new OpenLayers.LonLat(0, 0), 1);
-
-    for(var i=0; i<features.length; ++i) {
-        if (!bounds) {
-            bounds = features[i].geometry.getBounds();
-        } else {
-            bounds.extend(features[i].geometry.getBounds());
-        }
+    if (!elem) {
+        // if the map is not embedded in the body, add it to the container that follows
+        elem = document.createElement('div');
+        elem.id = 'map';
+        document.getElementById('post-body-map-container').appendChild(elem);
     }
-    vectors.addFeatures(features);
+
+    map = new OpenLayers.Map('map', options);
+    tiles = new OpenLayers.Layer.OSM( "OpenStreetMap", options);
+    vectors = new OpenLayers.Layer.Vector("Vector Layer", {projection: new OpenLayers.Projection("EPSG:4326")});
+    feature = wkt.read(geom);
+    bounds = feature.geometry.getBounds();
+
+    map.addLayers([tiles, vectors]);
     map.zoomToExtent(bounds);
+
+    vectors.addFeatures([feature]);
 });
 </script>
 {% endif %}

@@ -315,6 +315,16 @@ OPTIONAL_APPS = (
 
 DEBUG_TOOLBAR_CONFIG = {"INTERCEPT_REDIRECTS": False}
 
+#
+#
+#
+RICHTEXT_FILTERS = (
+    'geo.filters.inject_map',
+)
+#
+#
+#
+
 ###################
 # DEPLOY SETTINGS #
 ###################
