@@ -1,0 +1,49 @@
+{% overextends "pages/richtextpage.html" %}
+
+{% load mezzanine_tags %}
+
+{% block extra_head %}
+{% if page.geom %}
+<script type="text/javascript" src="//openlayers.org/dev/OpenLayers.js"></script>
+<script type="text/javascript">
+var geom = '{{page.geom}}',
+    wkt = new OpenLayers.Format.WKT();
+</script>
+<style type="text/css">
+#map {
+    height: 400px;
+    width: 600px; 
+}
+</style>
+{% endif %}
+{% endblock %}
+
+{% block main %}{{ block.super }}
+
+{% if page.geom %}
+<div id="map"></div>
+<script type="text/javascript">
+$(function () {
+    var map = new OpenLayers.Map('map'),
+        wms = new OpenLayers.Layer.WMS( "OpenLayers WMS",
+            "http://vmap0.tiles.osgeo.org/wms/vmap0?", {layers: 'basic'}),
+        vectors = new OpenLayers.Layer.Vector("Vector Layer"),
+        features = wkt.read(geom),
+        bounds;
+
+    map.addLayers([wms, vectors]);
+    map.setCenter(new OpenLayers.LonLat(0, 0), 1);
+
+    for(var i=0; i<features.length; ++i) {
+        if (!bounds) {
+            bounds = features[i].geometry.getBounds();
+        } else {
+            bounds.extend(features[i].geometry.getBounds());
+        }
+    }
+    vectors.addFeatures(features);
+    map.zoomToExtent(bounds);
+});
+</script>
+{% endif %}
+{% endblock %}
