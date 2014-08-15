@@ -1,13 +1,14 @@
-{% overextends "pages/richtextpage.html" %}
+{% overextends "blog/blog_post_detail.html" %}
 
 {% load mezzanine_tags %}
+
 {% load static from staticfiles %}
 
 {% block extra_head %}
-{% if page.geom %}
+{% if blog_post.geom %}
 <script type="text/javascript" src="{% static "js/OpenLayers.js" %}"></script>
 <script type="text/javascript">
-var geom = '{{page.geom}}',
+var geom = '{{blog_post.geom}}',
     wkt = new OpenLayers.Format.WKT();
 </script>
 <style type="text/css">
@@ -25,9 +26,9 @@ var geom = '{{page.geom}}',
 {% endif %}
 {% endblock %}
 
-{% block main %}{{ block.super }}
+{% block blog_post_detail_content %}{{ block.super }}
 
-{% if page.geom %}
+{% if blog_post.geom %}
 <div id="post-body-map-container"></div>
 <script type="text/javascript">
 $(function () {

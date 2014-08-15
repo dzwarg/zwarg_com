@@ -13,10 +13,16 @@ class Migration(SchemaMigration):
                       self.gf('django.contrib.gis.db.models.fields.LineStringField')(default=None, null=True, blank=True),
                       keep_default=False)
 
+        db.add_column(u'blog_blogpost', u'geom',
+                      self.gf('django.contrib.gis.db.models.fields.LineStringField')(default=None, null=True, blank=True),
+                      keep_default=False)
+
 
     def backwards(self, orm):
         # Deleting field 'Page.geom'
         db.delete_column(u'pages_page', u'geom')
+
+        db.delete_column(u'blog_blogpost', u'geom')
 
 
     models = {

@@ -68,6 +68,12 @@ EXTRA_MODEL_FIELDS = (
         (),
         {'null':True, 'blank':True, 'default':None},
     ),
+    (
+        "mezzanine.blog.models.BlogPost.geom",
+        "django.contrib.gis.db.models.fields.LineStringField",
+        (),
+        {'null':True, 'blank':True, 'default':None},
+    )
 )
 
 # Setting to turn on featured images for blog posts. Defaults to False.
