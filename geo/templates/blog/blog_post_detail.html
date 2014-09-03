@@ -47,8 +47,15 @@ $(function () {
     }
 
     map = new OpenLayers.Map('map');
-    tiles = new OpenLayers.Layer.OSM( "OpenStreetMap");
-    vectors = new OpenLayers.Layer.Vector("Vector Layer", {projection: "EPSG:4326"});
+    tiles = new OpenLayers.Layer.OSM("OpenStreetMap");
+    vectors = new OpenLayers.Layer.Vector("Vector Layer", {
+        projection: "EPSG:4326",
+        style: {
+            color: '#999999',
+            strokeWidth: 5,
+            strokeOpacity: 0.6
+        }
+    });
     feature = wkt.read(geom);
     feature.geometry.transform("EPSG:4326", "EPSG:900913")
     bounds = feature.geometry.getBounds();
