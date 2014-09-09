@@ -19,9 +19,7 @@ DATABASES = {
     }
 }
 
-ALLOWED_HOSTS = [
-    "%(live_host)s"
-]
+ALLOWED_HOSTS = %(live_hosts)s
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTOCOL", "https")
 

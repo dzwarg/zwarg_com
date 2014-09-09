@@ -36,7 +36,7 @@ env.venv_home = "/home/%s" % (env.user)
 env.venv_path = "%s/env" % (env.venv_home)
 env.proj_path = "%s/%s" % (env.venv_home, env.proj_name)
 env.manage = "%s/bin/python %s/manage.py" % (env.venv_path, env.proj_path)
-env.live_host = conf.get("LIVE_HOSTNAME", env.hosts[0] if env.hosts else None)
+env.live_hosts = conf.get("LIVE_HOSTNAMES", env.hosts[0] if env.hosts else None)
 env.repo_url = conf.get("REPO_URL", os.environ.get("REPO_URL", ""))
 env.reqs_path = conf.get("REQUIREMENTS_PATH", os.environ.get("REQUIREMENTS_PATH", None))
 env.gunicorn_port = conf.get("GUNICORN_PORT", 8000)
@@ -47,6 +47,12 @@ env.nevercache_key = conf.get("NEVERCACHE_KEY", os.environ.get("NEVERCACHE_KEY",
 env.aws_id = conf.get("AWS_ACCESS_KEY_ID", os.environ.get("AWS_ACCESS_KEY_ID", ""))
 env.aws_key = conf.get("AWS_SECRET_ACCESS_KEY", os.environ.get("AWS_SECRET_ACCESS_KEY", ""))
 env.aws_bucket = conf.get("AWS_STORAGE_BUCKET_NAME", os.environ.get("AWS_STORAGE_BUCKET_NAME", ""))
+
+# Append the EC2 host to the live_hosts if a different hostname was specified
+if env.live_hosts != env.hosts[0]:
+    env.live_hosts.extend(env.hosts)
+
+env.live_hostnames = ' '.join(env.live_hosts)
 
 ##################
 # Template setup #
@@ -402,9 +408,10 @@ def create():
                 crt_local, = glob(join("deploy", "*.crt"))
                 key_local, = glob(join("deploy", "*.key"))
             except ValueError:
-                parts = (crt_file, key_file, env.live_host)
-                sudo("openssl req -new -x509 -nodes -out %s -keyout %s "
-                     "-subj '/CN=%s' -days 3650" % parts)
+                for live_host in env.live_hosts:
+                    parts = (crt_file, key_file, live_host)
+                    sudo("openssl req -new -x509 -nodes -out %s -keyout %s "
+                         "-subj '/CN=%s' -days 3650" % parts)
             else:
                 upload_template(crt_local, crt_file, use_sudo=True)
                 upload_template(key_local, key_file, use_sudo=True)
@@ -417,11 +424,9 @@ def create():
         pip("gunicorn setproctitle south psycopg2 "
             "django-compressor python-memcached")
         manage("createdb --noinput --nodata")
-        python("from django.conf import settings;"
-               "from django.contrib.sites.models import Site;"
-               "site, _ = Site.objects.get_or_create(id=settings.SITE_ID);"
-               "site.domain = '" + env.live_host + "';"
-               "site.save();")
+        for live_host in env.live_hosts:
+            python("from django.contrib.sites.models import Site;"
+                   "Site.objects.get_or_create(domain='" + live_host + "');")
         if env.admin_pass:
             pw = env.admin_pass
             user_py = ("from mezzanine.boto.models import get_user_model;"
