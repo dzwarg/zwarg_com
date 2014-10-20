@@ -236,6 +236,7 @@ TEMPLATE_DIRS = (os.path.join(PROJECT_ROOT, "templates"),)
 ################
 
 INSTALLED_APPS = (
+    "theme",
     "zwarg_com.gallery",
     "zwarg_com.geo",
     "django.contrib.admin",

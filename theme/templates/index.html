@@ -1,0 +1,25 @@
+{% load static mezzanine_tags %}
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+  <head>
+    <title>zwarg.com</title>
+    <meta name="AUTHOR" content="David Zwarg"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+    {% compress css %}
+    <link rel="stylesheet" href="{% static "css/index.css" %}" type="text/css" />
+    {% endcompress %}
+  </head>
+  <body>
+    <div id="splash">
+      <div id="site">zwarg.com</div>
+      <img src="{% static "img/splash.jpg" %}" alt="Splash"/>
+      <ul id="menu">
+        <li><div>[ <a href="{% url "page" slug="blog" %}">blog</a> ]</div></li>
+        <li><div>[ <a href="{% url "page" slug="gallery" %}">gallery</a> ]</div></li>
+        <li><div>[ <a href="{% url "page" slug="about" %}">about</a> ]</div></li>
+      </ul>
+    </div>
+  </body>
+</html>
